@@ -1,3 +1,5 @@
+#https://github.com/atulyakumar97/fire-and-gun-detection/blob/master/yolo.py
+
 import cv2
 import numpy as np 
 import argparse
@@ -8,7 +10,7 @@ parser.add_argument('--webcam', help="True/False", default=False)
 parser.add_argument('--play_video', help="Tue/False", default=False)
 parser.add_argument('--image', help="Tue/False", default=False)
 parser.add_argument('--video_path', help="Path of video file", default="videos/fire1.mp4")
-parser.add_argument('--image_path', help="Path of image to detect objects", default="Images/bicycle.jpg")
+parser.add_argument('--image_path', help="Path of image to detect objects", default="screenshots/0.jpg")
 parser.add_argument('--verbose', help="To print statements", default=True)
 args = parser.parse_args()
 
@@ -16,12 +18,13 @@ args = parser.parse_args()
 #Load yolo
 def load_yolo():
 	net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
-	classes = []
+	#classes = []
 	with open("obj.names", "r") as f:
 		classes = [line.strip() for line in f.readlines()]
 
 	layers_names = net.getLayerNames()
-	output_layers = [layers_names[i[0]-1] for i in net.getUnconnectedOutLayers()]
+	#output_layers = [layers_names[i[0]-1] for i in net.getUnconnectedOutLayers()]
+	output_layers = [layers_names[i - 1] for i in net.getUnconnectedOutLayers()]
 	colors = np.random.uniform(0, 255, size=(len(classes), 3))
 	return net, classes, colors, output_layers
 
@@ -80,9 +83,9 @@ def draw_labels(boxes, confs, colors, class_ids, classes, img):
 		if i in indexes:
 			x, y, w, h = boxes[i]
 			label = str(classes[class_ids[i]])
-			color = colors[i]
-			cv2.rectangle(img, (x,y), (x+w, y+h), color, 2)
-			cv2.putText(img, label, (x, y - 5), font, 1, color, 1)
+			color = (0,0,255)
+			cv2.rectangle(img, (x,y), (x+(w), y+(h)), color, 4)
+			cv2.putText(img, label, (x, y - 5), font, 5, color, 5)
 	img=cv2.resize(img, (800,600))
 	cv2.imshow("Image", img)
 
