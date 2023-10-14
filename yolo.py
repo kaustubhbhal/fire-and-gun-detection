@@ -21,7 +21,7 @@ def load_yolo():
 		classes = [line.strip() for line in f.readlines()]
 
 	layers_names = net.getLayerNames()
-	output_layers = [layers_names[i[0]-1] for i in net.getUnconnectedOutLayers()]
+	output_layers = [layers_names[i-1] for i in net.getUnconnectedOutLayers()]
 	colors = np.random.uniform(0, 255, size=(len(classes), 3))
 	return net, classes, colors, output_layers
 
@@ -80,7 +80,7 @@ def draw_labels(boxes, confs, colors, class_ids, classes, img):
 		if i in indexes:
 			x, y, w, h = boxes[i]
 			label = str(classes[class_ids[i]])
-			color = colors[i]
+			color = (0,0,255)
 			cv2.rectangle(img, (x,y), (x+w, y+h), color, 2)
 			cv2.putText(img, label, (x, y - 5), font, 1, color, 1)
 	img=cv2.resize(img, (800,600))
