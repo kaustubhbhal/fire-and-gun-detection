@@ -2,21 +2,12 @@ import cv2
 import numpy as np 
 import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--webcam', help="True/False", default=False)
-parser.add_argument('--play_video', help="Tue/False", default=False)
-parser.add_argument('--image', help="Tue/False", default=False)
-parser.add_argument('--video_path', help="Path of video file", default="videos/fire1.mp4")
-parser.add_argument('--image_path', help="Path of image to detect objects", default="Images/bicycle.jpg")
-parser.add_argument('--verbose', help="To print statements", default=True)
-args = parser.parse_args()
-
 
 #Load yolo
 def load_yolo():
-	net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
+	net = cv2.dnn.readNet("fire_and_gun_detection/yolov3.weights", "fire_and_gun_detection/yolov3.cfg")
 	classes = []
-	with open("obj.names", "r") as f:
+	with open("fire_and_gun_detection/obj.names", "r") as f:
 		classes = [line.strip() for line in f.readlines()]
 
 	layers_names = net.getLayerNames()
@@ -30,11 +21,6 @@ def load_image(img_path):
 	img = cv2.resize(img, None, fx=0.4, fy=0.4)
 	height, width, channels = img.shape
 	return img, height, width, channels
-
-def start_webcam():
-	cap = cv2.VideoCapture(0)
-
-	return cap
 
 
 def display_blob(blob):
@@ -89,7 +75,6 @@ def image_write(img_path, img):
 	path = img_path.split('/')
 	path[1] = 'rendered-frames'
 	new_path = '/'.join(path)
-	print(new_path)
 	cv2.imwrite(new_path, img)
 
 def image_detect(img_path): 
@@ -98,61 +83,6 @@ def image_detect(img_path):
 	blob, outputs = detect_objects(image, model, output_layers)
 	boxes, confs, class_ids = get_box_dimensions(outputs, height, width)
 	draw_labels(boxes, confs, colors, class_ids, classes, image)
-	image_write(args.image_path, image)
-
-	print("Image detected")
+	image_write(img_path, image)
 	
 	return boxes, confs, class_ids
-
-def webcam_detect():
-	model, classes, colors, output_layers = load_yolo()
-	cap = start_webcam()
-	while True:
-		_, frame = cap.read()
-		height, width, channels = frame.shape
-		blob, outputs = detect_objects(frame, model, output_layers)
-		boxes, confs, class_ids = get_box_dimensions(outputs, height, width)
-		draw_labels(boxes, confs, colors, class_ids, classes, frame)
-		key = cv2.waitKey(1)
-		if key == 27:
-			break
-	cap.release()
-
-
-def start_video(video_path):
-	model, classes, colors, output_layers = load_yolo()
-	cap = cv2.VideoCapture(video_path)
-
-	while True:
-		_, frame = cap.read()
-		height, width, channels = frame.shape
-		blob, outputs = detect_objects(frame, model, output_layers)
-		boxes, confs, class_ids = get_box_dimensions(outputs, height, width)
-		draw_labels(boxes, confs, colors, class_ids, classes, frame)
-
-		key = cv2.waitKey(1)
-		if cv2.waitKey(1) & 0xFF ==ord('q'):
-			break
-	cap.release()
-
-if __name__ == '__main__':
-	webcam = args.webcam
-	video_play = args.play_video
-	image_path = args.image_path
-	print(image_path)
-	if webcam:
-		if args.verbose:
-			print('---- Starting Web Cam object detection ----')
-		webcam_detect()
-	if video_play:
-		video_path = args.video_path
-		if args.verbose:
-			print('Opening '+video_path+" .... ")
-		start_video(video_path)
-	if image_path:
-		if args.verbose:
-			print("Opening "+image_path+" .... ")
-		image_detect(image_path)
-	
-
-	cv2.destroyAllWindows()
