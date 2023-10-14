@@ -131,7 +131,8 @@ def start_video(video_path):
 if __name__ == '__main__':
 	webcam = args.webcam
 	video_play = args.play_video
-	image = args.image
+	image_path = args.image_path
+	print(image_path)
 	if webcam:
 		if args.verbose:
 			print('---- Starting Web Cam object detection ----')
@@ -141,8 +142,7 @@ if __name__ == '__main__':
 		if args.verbose:
 			print('Opening '+video_path+" .... ")
 		start_video(video_path)
-	if image:
-		image_path = args.image_path
+	if image_path:
 		if args.verbose:
 			print("Opening "+image_path+" .... ")
 		image_detect(image_path)
