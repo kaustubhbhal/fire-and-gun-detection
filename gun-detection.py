@@ -87,7 +87,7 @@ def draw_labels(boxes, confs, colors, class_ids, classes, img):
 
 def image_write(img_path, img):
 	path = img_path.split('/')
-	path[0] = 'rendered-frames'
+	path[1] = 'rendered-frames'
 	new_path = '/'.join(path)
 	print(new_path)
 	cv2.imwrite(new_path, img)
