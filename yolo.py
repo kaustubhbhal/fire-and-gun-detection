@@ -132,7 +132,7 @@ if __name__ == '__main__':
 	webcam = args.webcam
 	video_play = args.play_video
 	image_path = args.image_path
-	print(args.image_path)
+	print(image_path)
 	if webcam:
 		if args.verbose:
 			print('---- Starting Web Cam object detection ----')
